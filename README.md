@@ -16,42 +16,93 @@ fases) está em [`docs/spec.md`](docs/spec.md).
 
 ## Rodando localmente
 
-1. Instale as dependências:
+### 1. Instalar as dependências
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-2. Crie um projeto no [Supabase](https://supabase.com), copie a URL e as
-   chaves em *Project Settings > API*, e preencha um `.env.local` a partir
-   de `.env.example`:
+### 2. Criar o projeto no Supabase
 
-   ```bash
-   cp .env.example .env.local
-   ```
+1. Acesse [supabase.com](https://supabase.com) e crie uma conta (dá pra usar login do GitHub).
+2. Clique em **New Project**.
+3. Escolha uma organização (ou crie uma), dê um nome ao projeto (ex: `vagas-piaui`), defina uma senha forte para o banco (guarde-a) e escolha a região mais próxima do Brasil (geralmente `South America (São Paulo)`).
+4. Aguarde alguns minutos até o projeto ficar pronto (status "Healthy").
 
-3. Aplique a migration inicial no seu projeto Supabase (via CLI ou colando o
-   conteúdo de `supabase/migrations/0001_init.sql` no SQL Editor do painel):
+### 3. Pegar a URL e as chaves da API
 
-   ```bash
-   npx supabase link --project-ref <seu-project-ref>
-   npx supabase db push
-   ```
+1. No painel do projeto, vá em **Project Settings** (ícone de engrenagem) → **API**.
+2. Você vai precisar de três valores:
+   - **Project URL** → algo como `https://xxxxxxxxxxxx.supabase.co`
+   - **anon / public key** → uma chave longa (JWT)
+   - **service_role key** → outra chave longa, marcada como secreta (⚠️ nunca compartilhe publicamente nem comite no repositório)
 
-4. Gere os tipos TypeScript a partir do schema real (substitui o arquivo
-   escrito manualmente em `src/types/database.types.ts`):
+### 4. Configurar as variáveis de ambiente
 
-   ```bash
-   npx supabase gen types typescript --project-id <seu-project-ref> --schema public > src/types/database.types.ts
-   ```
+```bash
+cp .env.example .env.local
+```
 
-5. Rode o servidor de desenvolvimento:
+Abra `.env.local` e preencha:
 
-   ```bash
-   npm run dev
-   ```
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<a anon key>
+SUPABASE_SERVICE_ROLE_KEY=<a service_role key>
+```
 
-   Abra [http://localhost:3000](http://localhost:3000).
+As demais variáveis (Upstash, Turnstile, Resend) podem ficar em branco por
+enquanto — o site funciona sem elas em desenvolvimento.
+
+### 5. Aplicar a migration (criar tabelas, RLS e buckets de storage)
+
+Duas formas, escolha a mais simples pra você:
+
+**Opção A — pelo painel (mais simples, sem instalar nada):**
+
+1. No painel do Supabase, vá em **SQL Editor**.
+2. Abra o arquivo `supabase/migrations/0001_init.sql` deste repositório, copie todo o conteúdo.
+3. Cole no SQL Editor e clique em **Run**.
+
+**Opção B — pela linha de comando (CLI):**
+
+```bash
+npx supabase login
+npx supabase link --project-ref <seu-project-ref>
+npx supabase db push
+```
+
+(o `project-ref` é o trecho antes de `.supabase.co` na Project URL, ex: `xxxxxxxxxxxx`)
+
+Isso cria todas as tabelas, ativa a segurança (RLS) e já cria os buckets de
+armazenamento (`avatars` e `resumes`) automaticamente.
+
+### 6. Gerar os tipos TypeScript reais (opcional, mas recomendado)
+
+Substitui o arquivo escrito manualmente em `src/types/database.types.ts`
+pelo gerado direto do seu banco:
+
+```bash
+npx supabase gen types typescript --project-id <seu-project-ref> --schema public > src/types/database.types.ts
+```
+
+### 7. Rodar e testar
+
+```bash
+npm run dev
+```
+
+Abra [http://localhost:3000](http://localhost:3000). Crie uma conta de
+candidato, complete o perfil, crie uma conta de empresa (em outra
+aba/navegador anônimo), publique uma vaga, e veja ela aparecer em
+`/moderacao` para aprovar. Na primeira vez, você precisa promover seu
+próprio usuário a `admin` diretamente no banco (SQL Editor):
+
+```sql
+update public.profiles set role = 'admin' where id = '<seu-user-id>';
+```
+
+(o `<seu-user-id>` é encontrado em **Authentication > Users** no painel do Supabase)
 
 ## Scripts
 

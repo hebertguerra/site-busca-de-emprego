@@ -24,6 +24,12 @@ export type JobStatus =
 
 export type ContractType = "CLT" | "PJ" | "estagio" | "temporario" | "freelance"
 export type WorkplaceType = "presencial" | "remoto" | "hibrido"
+export type EconomicSector =
+  | "agronegocio"
+  | "turismo"
+  | "comercio_servicos"
+  | "industria_construcao"
+  | "outro"
 
 export type ApplicationStatus =
   | "enviada"
@@ -195,6 +201,9 @@ export interface Database {
           status: JobStatus
           rejection_reason: string | null
           is_featured: boolean
+          economic_sector: EconomicSector | null
+          required_skills: string[]
+          suggested_qualification: string | null
           published_at: string | null
           expires_at: string | null
           created_at: string
@@ -217,6 +226,9 @@ export interface Database {
           status?: JobStatus
           rejection_reason?: string | null
           is_featured?: boolean
+          economic_sector?: EconomicSector | null
+          required_skills?: string[]
+          suggested_qualification?: string | null
           published_at?: string | null
           expires_at?: string | null
         }

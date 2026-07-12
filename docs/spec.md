@@ -55,7 +55,7 @@ RLS habilitado em todas as tabelas desde a primeira migration
 - **candidates** (1:1 com profiles): `photo_url`, `headline`, `bio`, `city`, `state`, `whatsapp`, `resume_file_url`, `skills[]`, `desired_contract_types[]`, `profile_visibility`, `deleted_at` (soft delete). **Sem campos de idade/estado civil/raça.**
 - **candidate_experiences**, **candidate_education**: histórico profissional/educacional.
 - **companies** (1:1 com profiles): `trade_name`, `legal_name`, `cnpj` (único), `verified`, `plan_tier` (hook Fase 2, não usado no MVP).
-- **jobs**: `company_id`, título/descrição/requisitos, `contract_type`, `workplace_type`, `status` (`rascunho`/`pendente_aprovacao`/`publicada`/`pausada`/`encerrada`/`rejeitada`), `is_featured` (hook Fase 2).
+- **jobs**: `company_id`, título/descrição/requisitos, `contract_type`, `workplace_type`, `status` (`rascunho`/`pendente_aprovacao`/`publicada`/`pausada`/`encerrada`/`rejeitada`), `is_featured` (hook Fase 3/monetização), `economic_sector`/`required_skills`/`suggested_qualification` (hooks Fase 2/qualificação, ver `0002_qualification_hooks.sql`).
 - **applications**: `job_id`, `candidate_id`, `status`, `cover_note`, unique `(job_id, candidate_id)`.
 - **application_status_history**: trilha de auditoria de mudança de status (trigger automático).
 - **data_access_log**: LGPD — registra quando uma empresa visualiza o perfil completo de um candidato.
@@ -122,10 +122,36 @@ RLS habilitado em todas as tabelas desde a primeira migration
   moderação leve, LGPD, WhatsApp share. Este scaffold inicial já cobre o
   fluxo completo ponta a ponta (falta plugar um projeto Supabase real e
   testar).
-- **Fase 2 (Monetização)**: tabela `ads`, ativar `plan_tier`/`is_featured`,
-  pagamento via Mercado Pago, painel de admin mais completo.
-- **Fase 3 (IA)**: matching de currículo/vaga, extração de skills, sempre com
-  revisão humana disponível (LGPD Art. 20).
+- **Fase 2 (Qualificação profissional)**: motivada pela pesquisa em
+  [`pesquisa-mercado-sul-piaui.md`](pesquisa-mercado-sul-piaui.md) — o
+  problema local não é falta de vaga, é descompasso entre a vaga e a
+  qualificação do candidato. Escopo:
+  - Trilhas de qualificação atreladas à vaga: quando falta uma competência,
+    sugerir o curso gratuito (SENAC/SENAI/Mais Formação Mais Renda) mais
+    próximo que fecha a lacuna. Começa com um catálogo curado manualmente
+    pelo admin, não scraping/integração automática.
+  - Setorização de vagas por vocação econômica regional (`jobs.economic_sector`:
+    agronegócio/MATOPIBA, turismo/Serra da Capivara, comércio e serviços,
+    indústria e construção), já que são os polos de demanda identificados no
+    Sul do Piauí.
+  - Perfil do candidato reconhecendo experiência informal (bico, autônomo)
+    como experiência real, não só histórico formal em CTPS.
+  - Mostrar trajetória de ganho (faixa salarial acessível antes/depois de uma
+    qualificação) em vez de mensagem moralizante sobre formalização — é a
+    forma "não agressiva e direcionada" de endereçar o efeito de
+    desincentivo do Bolsa Família identificado na pesquisa.
+  - *Hooks de schema já reservados no MVP para não exigir migração
+    disruptiva depois*: `jobs.economic_sector`, `jobs.required_skills`,
+    `jobs.suggested_qualification` (ver `supabase/migrations/0002_qualification_hooks.sql`).
+- **Fase 3 (Monetização)**: tabela `ads`, ativar `companies.plan_tier`/
+  `jobs.is_featured`, pagamento via Mercado Pago, painel de admin mais
+  completo.
+- **Fase 4 (IA)**: matching de currículo/vaga usando `jobs.required_skills` x
+  `candidates.skills`, extração automática de skills a partir do currículo,
+  sempre com revisão humana disponível (LGPD Art. 20).
+- **Fase 5 (Empreendedorismo/MEI)**: rota paralela ao emprego CLT para quem
+  já trabalha por conta própria (22,8% dos ocupados no Piauí) — ligação com
+  microcrédito/Sebrae para formalização como MEI.
 
 ## Setup local
 
