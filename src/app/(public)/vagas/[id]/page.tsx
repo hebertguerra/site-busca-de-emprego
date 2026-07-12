@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { ApplyButton } from "@/components/shared/apply-button"
 import { ReportJobDialog } from "@/components/shared/report-job-dialog"
 import { createClient } from "@/lib/supabase/server"
+import type { EconomicSector } from "@/types/database.types"
 
 const CONTRACT_LABELS: Record<string, string> = {
   CLT: "CLT",
@@ -18,6 +19,14 @@ const WORKPLACE_LABELS: Record<string, string> = {
   presencial: "Presencial",
   remoto: "Remoto",
   hibrido: "Híbrido",
+}
+
+const SECTOR_LABELS: Record<EconomicSector, string> = {
+  agronegocio: "Agronegócio",
+  turismo: "Turismo",
+  comercio_servicos: "Comércio e serviços",
+  industria_construcao: "Indústria e construção",
+  outro: "Outro",
 }
 
 type Params = Promise<{ id: string }>
@@ -51,7 +60,7 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
   const { data: job } = await supabase
     .from("jobs")
     .select(
-      "id, title, description, requirements, benefits, contract_type, workplace_type, city, state, salary_min, salary_max, salary_is_public, companies(trade_name, city, state)"
+      "id, title, description, requirements, benefits, contract_type, workplace_type, city, state, salary_min, salary_max, salary_is_public, economic_sector, required_skills, suggested_qualification, companies(trade_name, city, state)"
     )
     .eq("id", id)
     .single()
@@ -68,6 +77,9 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
       salary_min: number | null
       salary_max: number | null
       salary_is_public: boolean
+      economic_sector: EconomicSector | null
+      required_skills: string[]
+      suggested_qualification: string | null
       companies: { trade_name: string; city: string | null; state: string | null } | null
     }, { merge: false }>()
 
@@ -76,6 +88,27 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
   }
 
   const company = job.companies
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let missingSkills: string[] = []
+  if (user && job.required_skills.length > 0) {
+    const { data: candidate } = await supabase
+      .from("candidates")
+      .select("skills")
+      .eq("id", user.id)
+      .single()
+
+    const candidateSkills = new Set(
+      (candidate?.skills ?? []).map((skill) => skill.trim().toLowerCase())
+    )
+    missingSkills = job.required_skills.filter(
+      (skill) => !candidateSkills.has(skill.trim().toLowerCase())
+    )
+  }
+
   const shareText = encodeURIComponent(
     `Vaga: ${job.title}${job.city ? ` (${job.city}/${job.state})` : ""} - confira no Vagas Piauí`
   )
@@ -94,6 +127,9 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
         <Badge variant="outline">
           {WORKPLACE_LABELS[job.workplace_type] ?? job.workplace_type}
         </Badge>
+        {job.economic_sector && (
+          <Badge variant="outline">{SECTOR_LABELS[job.economic_sector]}</Badge>
+        )}
       </div>
 
       <h1 className="mt-3 text-2xl font-bold">{job.title}</h1>
@@ -126,6 +162,34 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
           </>
         )}
       </div>
+
+      {job.required_skills.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-base font-semibold">Habilidades desejadas</h2>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {job.required_skills.map((skill) => (
+              <Badge
+                key={skill}
+                variant={missingSkills.includes(skill) ? "outline" : "secondary"}
+              >
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {user && missingSkills.length > 0 && job.suggested_qualification && (
+        <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
+          <p className="text-sm font-medium">
+            Você ainda não indicou {missingSkills.length === 1 ? "essa habilidade" : "essas habilidades"} no
+            seu perfil: {missingSkills.join(", ")}.
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Caminho sugerido pela empresa: {job.suggested_qualification}
+          </p>
+        </div>
+      )}
 
       <div className="sticky bottom-4 mt-8 flex flex-col gap-3 rounded-lg border bg-background p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
         <ApplyButton jobId={job.id} />

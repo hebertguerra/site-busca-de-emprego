@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { AvatarUploader } from "@/components/shared/avatar-uploader"
 import { ResumeUploader } from "@/components/shared/resume-uploader"
 import { CandidateProfileForm } from "@/components/forms/candidate-profile-form"
+import { ExperienceSection } from "@/components/forms/experience-section"
+import { EducationSection } from "@/components/forms/education-section"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/server"
 
@@ -21,6 +23,19 @@ export default async function PerfilPage() {
     .select("*")
     .eq("id", user.id)
     .single()
+
+  const [{ data: experiences }, { data: education }] = await Promise.all([
+    supabase
+      .from("candidate_experiences")
+      .select("*")
+      .eq("candidate_id", user.id)
+      .order("start_date", { ascending: false }),
+    supabase
+      .from("candidate_education")
+      .select("*")
+      .eq("candidate_id", user.id)
+      .order("start_year", { ascending: false }),
+  ])
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-12">
@@ -54,6 +69,24 @@ export default async function PerfilPage() {
           </CardHeader>
           <CardContent>
             <CandidateProfileForm candidate={candidate ?? null} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Experiência profissional</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ExperienceSection experiences={experiences ?? []} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Formação e cursos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EducationSection education={education ?? []} />
           </CardContent>
         </Card>
       </div>

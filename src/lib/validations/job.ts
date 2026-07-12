@@ -12,6 +12,14 @@ export const jobSchema = z.object({
   salaryMin: z.coerce.number().nonnegative().optional(),
   salaryMax: z.coerce.number().nonnegative().optional(),
   salaryIsPublic: z.boolean().default(false),
+  economicSector: z
+    .enum(["agronegocio", "turismo", "comercio_servicos", "industria_construcao", "outro"])
+    .optional(),
+  requiredSkills: z.array(z.string().min(1)).max(30).default([]),
+  suggestedQualification: z
+    .string()
+    .max(300, "A dica de qualificação pode ter até 300 caracteres.")
+    .optional(),
 })
 
 export type JobInput = z.infer<typeof jobSchema>

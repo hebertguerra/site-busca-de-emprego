@@ -18,12 +18,13 @@ export const candidateProfileSchema = z.object({
 export type CandidateProfileInput = z.infer<typeof candidateProfileSchema>
 
 export const experienceSchema = z.object({
-  companyName: z.string().min(2, "Informe o nome da empresa."),
+  companyName: z.string().min(2, "Informe o nome da empresa (ou de quem você prestou o serviço)."),
   roleTitle: z.string().min(2, "Informe o cargo/função."),
   startDate: z.string().min(1, "Informe a data de início."),
   endDate: z.string().optional(),
   isCurrent: z.boolean().default(false),
   description: z.string().max(500).optional(),
+  employmentType: z.enum(["formal", "informal", "autonomo"]).default("formal"),
 })
 
 export type ExperienceInput = z.infer<typeof experienceSchema>

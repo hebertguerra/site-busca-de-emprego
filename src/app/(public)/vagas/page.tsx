@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/server"
+import type { EconomicSector } from "@/types/database.types"
 
 export const metadata = { title: "Vagas abertas" }
 
@@ -20,23 +21,43 @@ const WORKPLACE_LABELS: Record<string, string> = {
   hibrido: "Híbrido",
 }
 
-type SearchParams = Promise<{ cidade?: string }>
+const SECTOR_LABELS: Record<EconomicSector, string> = {
+  agronegocio: "Agronegócio",
+  turismo: "Turismo",
+  comercio_servicos: "Comércio e serviços",
+  industria_construcao: "Indústria e construção",
+  outro: "Outro",
+}
+
+const SECTOR_OPTIONS: EconomicSector[] = [
+  "agronegocio",
+  "turismo",
+  "comercio_servicos",
+  "industria_construcao",
+  "outro",
+]
+
+type SearchParams = Promise<{ cidade?: string; setor?: string }>
 
 export default async function VagasPage({
   searchParams,
 }: {
   searchParams: SearchParams
 }) {
-  const { cidade } = await searchParams
+  const { cidade, setor } = await searchParams
   const supabase = await createClient()
 
   let query = supabase
     .from("jobs")
-    .select("id, title, city, state, contract_type, workplace_type, published_at")
+    .select("id, title, city, state, contract_type, workplace_type, economic_sector, published_at")
     .order("published_at", { ascending: false })
 
   if (cidade) {
     query = query.ilike("city", `%${cidade}%`)
+  }
+
+  if (setor && SECTOR_OPTIONS.includes(setor as EconomicSector)) {
+    query = query.eq("economic_sector", setor as EconomicSector)
   }
 
   const { data: jobs, error } = await query
@@ -46,8 +67,25 @@ export default async function VagasPage({
       <h1 className="text-2xl font-bold">Vagas abertas</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {jobs?.length ?? 0} vaga(s) encontrada(s)
-        {cidade ? ` em "${cidade}"` : ""}.
+        {cidade ? ` em "${cidade}"` : ""}
+        {setor ? ` no setor "${SECTOR_LABELS[setor as EconomicSector] ?? setor}"` : ""}.
       </p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link href={cidade ? `/vagas?cidade=${cidade}` : "/vagas"}>
+          <Badge variant={!setor ? "default" : "outline"}>Todos os setores</Badge>
+        </Link>
+        {SECTOR_OPTIONS.map((option) => (
+          <Link
+            key={option}
+            href={`/vagas?${cidade ? `cidade=${cidade}&` : ""}setor=${option}`}
+          >
+            <Badge variant={setor === option ? "default" : "outline"}>
+              {SECTOR_LABELS[option]}
+            </Badge>
+          </Link>
+        ))}
+      </div>
 
       {error && (
         <p className="mt-6 text-sm text-destructive">
@@ -58,7 +96,7 @@ export default async function VagasPage({
 
       {!error && (jobs?.length ?? 0) === 0 && (
         <p className="mt-6 text-sm text-muted-foreground">
-          Nenhuma vaga publicada no momento. Volte em breve!
+          Nenhuma vaga publicada com esse filtro no momento. Volte em breve!
         </p>
       )}
 
@@ -81,6 +119,9 @@ export default async function VagasPage({
                 <Badge variant="outline">
                   {WORKPLACE_LABELS[job.workplace_type] ?? job.workplace_type}
                 </Badge>
+                {job.economic_sector && (
+                  <Badge variant="outline">{SECTOR_LABELS[job.economic_sector]}</Badge>
+                )}
               </CardContent>
             </Card>
           </Link>

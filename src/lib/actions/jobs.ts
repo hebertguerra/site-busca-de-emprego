@@ -10,6 +10,12 @@ import { createClient } from "@/lib/supabase/server"
 export type ActionState = { error?: string } | undefined
 
 function parseJobForm(formData: FormData) {
+  const skillsText = String(formData.get("requiredSkillsText") ?? "")
+  const requiredSkills = skillsText
+    .split(",")
+    .map((skill) => skill.trim())
+    .filter(Boolean)
+
   return jobSchema.safeParse({
     title: formData.get("title"),
     description: formData.get("description"),
@@ -22,6 +28,9 @@ function parseJobForm(formData: FormData) {
     salaryMin: formData.get("salaryMin") || undefined,
     salaryMax: formData.get("salaryMax") || undefined,
     salaryIsPublic: formData.get("salaryIsPublic") === "on",
+    economicSector: formData.get("economicSector") || undefined,
+    requiredSkills,
+    suggestedQualification: formData.get("suggestedQualification") || undefined,
   })
 }
 
@@ -59,6 +68,9 @@ export async function createJob(
       salary_min: parsed.data.salaryMin,
       salary_max: parsed.data.salaryMax,
       salary_is_public: parsed.data.salaryIsPublic,
+      economic_sector: parsed.data.economicSector,
+      required_skills: parsed.data.requiredSkills,
+      suggested_qualification: parsed.data.suggestedQualification,
       // Sempre entra em fila de moderação — só um admin pode publicar (ver trigger no banco).
       status: "pendente_aprovacao",
     })
@@ -109,6 +121,9 @@ export async function updateJob(
       salary_min: parsed.data.salaryMin,
       salary_max: parsed.data.salaryMax,
       salary_is_public: parsed.data.salaryIsPublic,
+      economic_sector: parsed.data.economicSector,
+      required_skills: parsed.data.requiredSkills,
+      suggested_qualification: parsed.data.suggestedQualification,
     })
     .eq("id", jobId)
 

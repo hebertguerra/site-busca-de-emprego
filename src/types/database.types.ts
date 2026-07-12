@@ -30,6 +30,7 @@ export type EconomicSector =
   | "comercio_servicos"
   | "industria_construcao"
   | "outro"
+export type EmploymentType = "formal" | "informal" | "autonomo"
 
 export type ApplicationStatus =
   | "enviada"
@@ -113,6 +114,7 @@ export interface Database {
           end_date: string | null
           is_current: boolean
           description: string | null
+          employment_type: EmploymentType
           created_at: string
         }
         Insert: {
@@ -124,6 +126,7 @@ export interface Database {
           end_date?: string | null
           is_current?: boolean
           description?: string | null
+          employment_type?: EmploymentType
         }
         Update: Partial<Database["public"]["Tables"]["candidate_experiences"]["Insert"]>
         Relationships: []

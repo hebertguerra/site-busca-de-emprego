@@ -105,6 +105,52 @@ export function JobForm({ job, action }: { job?: Job; action: JobFormAction }) {
         </Label>
       </div>
 
+      <div className="grid gap-2">
+        <Label htmlFor="economicSector">Setor econômico (opcional)</Label>
+        <Select name="economicSector" defaultValue={job?.economic_sector ?? undefined}>
+          <SelectTrigger id="economicSector">
+            <SelectValue placeholder="Selecione, se aplicável" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="agronegocio">Agronegócio</SelectItem>
+            <SelectItem value="turismo">Turismo</SelectItem>
+            <SelectItem value="comercio_servicos">Comércio e serviços</SelectItem>
+            <SelectItem value="industria_construcao">Indústria e construção</SelectItem>
+            <SelectItem value="outro">Outro</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          Ajuda o candidato a filtrar vagas pelos setores que mais empregam na região.
+        </p>
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="requiredSkillsText">Habilidades exigidas (separadas por vírgula, opcional)</Label>
+        <Input
+          id="requiredSkillsText"
+          name="requiredSkillsText"
+          placeholder="Ex: direção veicular, excel, atendimento ao cliente"
+          defaultValue={job?.required_skills?.join(", ") ?? ""}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="suggestedQualification">
+          Qualificação sugerida para quem não tem essas habilidades (opcional)
+        </Label>
+        <Textarea
+          id="suggestedQualification"
+          name="suggestedQualification"
+          rows={2}
+          placeholder="Ex: Curso gratuito de Assistente Administrativo no SENAC de Bom Jesus"
+          defaultValue={job?.suggested_qualification ?? ""}
+        />
+        <p className="text-xs text-muted-foreground">
+          Mostrado ao candidato que ainda não tem as habilidades exigidas, como um caminho para se
+          qualificar em vez de simplesmente ser descartado.
+        </p>
+      </div>
+
       <p className="rounded-md bg-muted p-3 text-xs text-muted-foreground">
         Não inclua critérios como idade, sexo, raça ou estado civil na vaga — isso é vedado pela
         Lei 9.029/95 e vagas com esses termos são sinalizadas para revisão.
