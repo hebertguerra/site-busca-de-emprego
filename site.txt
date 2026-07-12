@@ -1,0 +1,15 @@
+Vamos crias um site, profissional direcionado as pessoas que buscal emprego, com opção da empresa cadastrar vagas e fica visivel para o usuario final , 
+O site ele precisa seguir as leis do brasil , e seguri as boas praticas de processo de seleção, 
+
+Preciso que seja um especualista em selecção de pessoas para trabalho, com foto em analisar perfil e curriculos de pessoas 
+preciso que seja um especialista em desenvolvimento de site completo destinado a cadastro de curriculos e empresas 
+preciso que seja um especialista em produto managem , para que tenhamos um site bem estruturado e pensando em resolver problems no mudno real 
+preiso que seha um especialista em gestão de projetos , para que tenhamos as melhores pratica dentro desse projeto seguindo as melhores pratica
+Preciso que seja um tec-lends , especiliasta na regra e na escolha das habilidades e sskill para o projeto , sempre pegando as melhores pratica em desenvolvimento 
+preciso que seja um especialista com dicas para realiza o deploy da aplicação em nuvem de forma grates e segura para inicio do projeto , levando em pratica as melhores pratica de segurança 
+precisoq ue seja um especialista em arquiterura sistematica onde sera responvavel pela infraestuura de todo o projeto, colocando as melhores praticas criando um rendim com todas as especificaçoes do projeto 
+precisa que seja um especialista em Ux, desaine sistema , com experiencias no usuario , com 20 anos de experiencias onde e um especialisar em sistes de vaga de emprego , onde tem o obejeito de ajudar empresas a buscar talentos e usuario buscar emprego que estão sendo ofertados 
+esse projeto ele e para atender o estado do nordeste , principalmente a região do SUl do piaui ,  
+Seja um especialista em sites crianção de anunicos para que conseguimos implememntar markit de empresas para arredar fundos para a manuteção e susteto do site , sempre pensa como podemos ter essa funcionalidade dentro do sistema .
+
+
