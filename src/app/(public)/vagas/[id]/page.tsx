@@ -120,7 +120,7 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both flex flex-wrap items-center gap-2">
         <Badge variant="secondary">
           {CONTRACT_LABELS[job.contract_type] ?? job.contract_type}
         </Badge>
@@ -128,12 +128,16 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
           {WORKPLACE_LABELS[job.workplace_type] ?? job.workplace_type}
         </Badge>
         {job.economic_sector && (
-          <Badge variant="outline">{SECTOR_LABELS[job.economic_sector]}</Badge>
+          <Badge className="border-primary/30 bg-primary/10 text-primary">
+            {SECTOR_LABELS[job.economic_sector]}
+          </Badge>
         )}
       </div>
 
-      <h1 className="mt-3 text-2xl font-bold">{job.title}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h1 className="animate-in fade-in slide-in-from-bottom-2 duration-500 delay-75 fill-mode-both mt-3 text-2xl font-bold">
+        {job.title}
+      </h1>
+      <p className="animate-in fade-in duration-500 delay-100 fill-mode-both mt-1 text-sm text-muted-foreground">
         {company?.trade_name}
         {job.city ? ` · ${job.city}/${job.state}` : ""}
       </p>
@@ -191,7 +195,7 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
         </div>
       )}
 
-      <div className="sticky bottom-4 mt-8 flex flex-col gap-3 rounded-lg border bg-background p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150 fill-mode-both sticky bottom-4 mt-8 flex flex-col gap-3 rounded-2xl border bg-background/95 p-4 shadow-lg backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
         <ApplyButton jobId={job.id} />
         <a
           href={`https://wa.me/?text=${shareText}%20${encodeURIComponent(pageUrl)}`}

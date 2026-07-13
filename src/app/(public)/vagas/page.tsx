@@ -64,23 +64,31 @@ export default async function VagasPage({
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-12">
-      <h1 className="text-2xl font-bold">Vagas abertas</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight">Vagas abertas</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {jobs?.length ?? 0} vaga(s) encontrada(s)
         {cidade ? ` em "${cidade}"` : ""}
         {setor ? ` no setor "${SECTOR_LABELS[setor as EconomicSector] ?? setor}"` : ""}.
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-wrap gap-2">
         <Link href={cidade ? `/vagas?cidade=${cidade}` : "/vagas"}>
-          <Badge variant={!setor ? "default" : "outline"}>Todos os setores</Badge>
+          <Badge
+            className="cursor-pointer px-3 py-1.5 text-sm transition-transform hover:scale-105"
+            variant={!setor ? "default" : "outline"}
+          >
+            Todos os setores
+          </Badge>
         </Link>
         {SECTOR_OPTIONS.map((option) => (
           <Link
             key={option}
             href={`/vagas?${cidade ? `cidade=${cidade}&` : ""}setor=${option}`}
           >
-            <Badge variant={setor === option ? "default" : "outline"}>
+            <Badge
+              className="cursor-pointer px-3 py-1.5 text-sm transition-transform hover:scale-105"
+              variant={setor === option ? "default" : "outline"}
+            >
               {SECTOR_LABELS[option]}
             </Badge>
           </Link>
@@ -101,9 +109,14 @@ export default async function VagasPage({
       )}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {jobs?.map((job) => (
-          <Link key={job.id} href={`/vagas/${job.id}`}>
-            <Card className="h-full transition-colors hover:bg-muted/50">
+        {jobs?.map((job, index) => (
+          <Link
+            key={job.id}
+            href={`/vagas/${job.id}`}
+            className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
+            style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+          >
+            <Card className="h-full gap-3 rounded-2xl border-border/70 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
               <CardHeader>
                 <CardTitle className="text-base">{job.title}</CardTitle>
               </CardHeader>
@@ -120,7 +133,9 @@ export default async function VagasPage({
                   {WORKPLACE_LABELS[job.workplace_type] ?? job.workplace_type}
                 </Badge>
                 {job.economic_sector && (
-                  <Badge variant="outline">{SECTOR_LABELS[job.economic_sector]}</Badge>
+                  <Badge className="border-primary/30 bg-primary/10 text-primary">
+                    {SECTOR_LABELS[job.economic_sector]}
+                  </Badge>
                 )}
               </CardContent>
             </Card>

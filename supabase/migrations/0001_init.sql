@@ -105,19 +105,9 @@ create policy "candidato gerencia o proprio perfil"
   using (id = auth.uid())
   with check (id = auth.uid());
 
--- Nao existe busca publica/navegavel de candidatos no MVP: uma empresa so
--- enxerga um candidato depois que ele se candidata a uma vaga dela.
-create policy "empresa ve candidatos que se candidataram as suas vagas"
-  on public.candidates for select
-  using (
-    exists (
-      select 1
-      from public.applications a
-      join public.jobs j on j.id = a.job_id
-      where a.candidate_id = candidates.id
-        and j.company_id = auth.uid()
-    )
-  );
+-- Nota: a policy "empresa ve candidatos que se candidataram as suas vagas"
+-- so pode ser criada depois que as tabelas `jobs` e `applications` existirem
+-- (ela faz join com as duas) - ver secao "Politicas cruzadas" mais abaixo.
 
 -- -------------------------------------------------------------------------
 -- candidate_experiences / candidate_education
@@ -143,17 +133,8 @@ create policy "candidato gerencia as proprias experiencias"
   using (candidate_id = auth.uid())
   with check (candidate_id = auth.uid());
 
-create policy "empresa ve experiencias de candidatos que se candidataram"
-  on public.candidate_experiences for select
-  using (
-    exists (
-      select 1
-      from public.applications a
-      join public.jobs j on j.id = a.job_id
-      where a.candidate_id = candidate_experiences.candidate_id
-        and j.company_id = auth.uid()
-    )
-  );
+-- Nota: a policy "empresa ve experiencias..." fica na secao "Politicas
+-- cruzadas" mais abaixo (depende de `jobs` e `applications`).
 
 create table public.candidate_education (
   id uuid primary key default gen_random_uuid(),
@@ -175,17 +156,8 @@ create policy "candidato gerencia a propria formacao"
   using (candidate_id = auth.uid())
   with check (candidate_id = auth.uid());
 
-create policy "empresa ve formacao de candidatos que se candidataram"
-  on public.candidate_education for select
-  using (
-    exists (
-      select 1
-      from public.applications a
-      join public.jobs j on j.id = a.job_id
-      where a.candidate_id = candidate_education.candidate_id
-        and j.company_id = auth.uid()
-    )
-  );
+-- Nota: a policy "empresa ve formacao..." fica na secao "Politicas cruzadas"
+-- mais abaixo (depende de `jobs` e `applications`).
 
 -- -------------------------------------------------------------------------
 -- companies (1:1 com profiles)
@@ -362,6 +334,50 @@ create policy "candidato pode desistir da candidatura"
   with check (candidate_id = auth.uid() and status = 'desistiu');
 
 -- -------------------------------------------------------------------------
+-- Politicas cruzadas (dependem de `jobs` e `applications`, por isso ficam
+-- aqui e nao junto da criacao de `candidates`/`candidate_experiences`/
+-- `candidate_education`).
+-- -------------------------------------------------------------------------
+
+-- Nao existe busca publica/navegavel de candidatos no MVP: uma empresa so
+-- enxerga um candidato depois que ele se candidata a uma vaga dela.
+create policy "empresa ve candidatos que se candidataram as suas vagas"
+  on public.candidates for select
+  using (
+    exists (
+      select 1
+      from public.applications a
+      join public.jobs j on j.id = a.job_id
+      where a.candidate_id = candidates.id
+        and j.company_id = auth.uid()
+    )
+  );
+
+create policy "empresa ve experiencias de candidatos que se candidataram"
+  on public.candidate_experiences for select
+  using (
+    exists (
+      select 1
+      from public.applications a
+      join public.jobs j on j.id = a.job_id
+      where a.candidate_id = candidate_experiences.candidate_id
+        and j.company_id = auth.uid()
+    )
+  );
+
+create policy "empresa ve formacao de candidatos que se candidataram"
+  on public.candidate_education for select
+  using (
+    exists (
+      select 1
+      from public.applications a
+      join public.jobs j on j.id = a.job_id
+      where a.candidate_id = candidate_education.candidate_id
+        and j.company_id = auth.uid()
+    )
+  );
+
+-- -------------------------------------------------------------------------
 -- application_status_history (trilha de auditoria)
 -- -------------------------------------------------------------------------
 create table public.application_status_history (
@@ -491,6 +507,20 @@ create policy "usuario registra o proprio consentimento"
 create policy "usuario ve o proprio historico de consentimento"
   on public.consent_log for select
   using (profile_id = auth.uid());
+
+-- -------------------------------------------------------------------------
+-- Grants de tabela (necessarios alem do RLS).
+-- Desde 2025 o Supabase parou de auto-expor tabelas novas do schema public
+-- para anon/authenticated: sem este GRANT, toda query falha com "permission
+-- denied" antes mesmo de a policy de RLS ser avaliada. RLS continua sendo a
+-- camada de seguranca real (linha a linha); o GRANT so libera a operacao no
+-- nivel da tabela.
+-- -------------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated;
+grant usage, select on all sequences in schema public to anon, authenticated;
+alter default privileges in schema public grant select, insert, update, delete on tables to anon, authenticated;
+alter default privileges in schema public grant usage, select on sequences to anon, authenticated;
 
 -- =========================================================================
 -- Storage: buckets e policies
