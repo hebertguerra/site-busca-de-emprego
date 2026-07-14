@@ -42,6 +42,8 @@ export type ApplicationStatus =
 
 export type ReportStatus = "aberto" | "em_analise" | "resolvido" | "arquivado"
 export type ConsentType = "cadastro" | "foto" | "curriculo" | "cookies"
+export type BoostTier = "7_dias" | "15_dias" | "30_dias"
+export type BoostStatus = "pendente" | "pago" | "falhou" | "expirado"
 
 export interface Database {
   public: {
@@ -204,6 +206,7 @@ export interface Database {
           status: JobStatus
           rejection_reason: string | null
           is_featured: boolean
+          featured_until: string | null
           economic_sector: EconomicSector | null
           required_skills: string[]
           suggested_qualification: string | null
@@ -229,6 +232,7 @@ export interface Database {
           status?: JobStatus
           rejection_reason?: string | null
           is_featured?: boolean
+          featured_until?: string | null
           economic_sector?: EconomicSector | null
           required_skills?: string[]
           suggested_qualification?: string | null
@@ -236,6 +240,37 @@ export interface Database {
           expires_at?: string | null
         }
         Update: Partial<Database["public"]["Tables"]["jobs"]["Insert"]>
+        Relationships: []
+      }
+      job_boosts: {
+        Row: {
+          id: string
+          job_id: string
+          company_id: string
+          tier: BoostTier
+          duration_days: number
+          price_cents: number
+          status: BoostStatus
+          payment_provider: string
+          payment_id: string | null
+          external_reference: string
+          created_at: string
+          paid_at: string | null
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          company_id: string
+          tier: BoostTier
+          duration_days: number
+          price_cents: number
+          status?: BoostStatus
+          payment_provider?: string
+          payment_id?: string | null
+          external_reference?: string
+          paid_at?: string | null
+        }
+        Update: Partial<Database["public"]["Tables"]["job_boosts"]["Insert"]>
         Relationships: []
       }
       applications: {

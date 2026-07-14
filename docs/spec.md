@@ -143,9 +143,19 @@ RLS habilitado em todas as tabelas desde a primeira migration
   - *Hooks de schema já reservados no MVP para não exigir migração
     disruptiva depois*: `jobs.economic_sector`, `jobs.required_skills`,
     `jobs.suggested_qualification` (ver `supabase/migrations/0002_qualification_hooks.sql`).
-- **Fase 3 (Monetização)**: tabela `ads`, ativar `companies.plan_tier`/
-  `jobs.is_featured`, pagamento via Mercado Pago, painel de admin mais
-  completo.
+- **Fase 3 (Monetização — implementada)**: modelo escolhido foi "vaga em
+  destaque avulsa" (pagamento único por 7/15/30 dias, não assinatura).
+  Tabela `job_boosts` (`supabase/migrations/0004_job_boosts.sql`) registra
+  cada compra; `jobs.featured_until` é a fonte de verdade de "está em
+  destaque agora" (`is_featured and featured_until > now()`, calculado em
+  tempo de leitura — sem cron). Checkout via Mercado Pago Checkout Pro
+  (`src/lib/actions/boosts.ts`), confirmação só via webhook assinado
+  (`src/app/api/webhooks/mercadopago/route.ts`, valida `x-signature` com o
+  `WebhookSignatureValidator` do SDK oficial antes de processar qualquer
+  coisa). Como no MVP, roda com env vars vazias sem quebrar o resto do site
+  até o usuário configurar a conta Mercado Pago (passo a passo no README).
+  `companies.plan_tier` segue reservado, não usado (seria para um Fase 3.5
+  de assinatura mensal, se o modelo avulso não se sustentar sozinho).
 - **Fase 4 (IA)**: matching de currículo/vaga usando `jobs.required_skills` x
   `candidates.skills`, extração automática de skills a partir do currículo,
   sempre com revisão humana disponível (LGPD Art. 20).

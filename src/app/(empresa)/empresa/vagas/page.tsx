@@ -1,8 +1,9 @@
 import Link from "next/link"
-import { Briefcase, PlusCircle } from "lucide-react"
+import { Briefcase, PlusCircle, Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { BoostJobDialog } from "@/components/forms/boost-job-dialog"
 import { createClient } from "@/lib/supabase/server"
 
 export const metadata = { title: "Minhas vagas" }
@@ -34,7 +35,7 @@ export default async function EmpresaVagasPage() {
   const { data: jobs } = user
     ? await supabase
         .from("jobs")
-        .select("id, title, status, rejection_reason, created_at")
+        .select("id, title, status, rejection_reason, is_featured, featured_until, created_at")
         .eq("company_id", user.id)
         .order("created_at", { ascending: false })
     : { data: [] }
@@ -72,20 +73,29 @@ export default async function EmpresaVagasPage() {
           >
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium">{job.title}</span>
-              <Badge className={STATUS_CLASSES[job.status] ?? ""}>
-                {STATUS_LABELS[job.status] ?? job.status}
-              </Badge>
+              <div className="flex items-center gap-1.5">
+                {job.is_featured && job.featured_until && new Date(job.featured_until) > new Date() && (
+                  <Badge className="gap-1 border-amber-300 bg-amber-100 text-amber-800">
+                    <Sparkles className="size-3" />
+                    Em destaque
+                  </Badge>
+                )}
+                <Badge className={STATUS_CLASSES[job.status] ?? ""}>
+                  {STATUS_LABELS[job.status] ?? job.status}
+                </Badge>
+              </div>
             </div>
             {job.status === "rejeitada" && job.rejection_reason && (
               <p className="mt-1 text-sm text-destructive">Motivo: {job.rejection_reason}</p>
             )}
-            <div className="mt-2 flex gap-4 text-sm">
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
               <Link href={`/empresa/vagas/${job.id}/editar`} className="font-medium text-primary underline underline-offset-2">
                 Editar
               </Link>
               <Link href={`/empresa/vagas/${job.id}/candidatos`} className="font-medium text-primary underline underline-offset-2">
                 Ver candidatos
               </Link>
+              {job.status === "publicada" && <BoostJobDialog jobId={job.id} jobTitle={job.title} />}
             </div>
           </div>
         ))}

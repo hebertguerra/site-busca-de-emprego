@@ -1,3 +1,4 @@
+fase: 1 
 Vamos crias um site, profissional direcionado as pessoas que buscal emprego, com opção da empresa cadastrar vagas e fica visivel para o usuario final , 
 O site ele precisa seguir as leis do brasil , e seguri as boas praticas de processo de seleção, 
 
@@ -12,6 +13,7 @@ precisa que seja um especialista em Ux, desaine sistema , com experiencias no us
 esse projeto ele e para atender o estado do nordeste , principalmente a região do SUl do piaui ,  
 Seja um especialista em sites crianção de anunicos para que conseguimos implememntar markit de empresas para arredar fundos para a manuteção e susteto do site , sempre pensa como podemos ter essa funcionalidade dentro do sistema .
 
+fase 2:
 
 Faça uma pesquisa sobre a regiaõ do sul do piaui, seja um pesquisador especialista em dados sobre emprego e renda, veja como podemos melhor e ajudar a situação das pessoas na busca de emprego , e principalmente na forma de moldar pessoas para as arias que tem mas em aberto 
 porque no mundo real , vagas de emprego tem , mas o que falta e qualificação sobre ela .
@@ -19,3 +21,10 @@ Acredito que no piaui a marior dificuldade e o emprego informal e isso custa mui
 pessoas a irem mas alem, em buscar novas experiencia ,estudar,curos, emprender, precisamos ser um sitem diferente de todoas os tradicionas que tem atualmente , precisamos pensa no logo prazo para o desenvolvimento de pessoas em arias setos que precisa de profissionas , com bom desependo 
 para as empresas que buscam essas pessoas para supri a vaga em oferta . 
 Estou busncado resolver um problema real da vida real mas preciso de ajuda em pesquisa, melhorias, e direções para resolve um problemas que afeta muitas pessoas .
+
+fase 3:
+verifica a possibilidade de integrar com curso gratis ofertado pelo governo ,  ja vi que na carteira de trabalho la tem opção de cusro , vamos pensa em uma forma de integrar ou pelo menos inoforma os curso grates que o governo oferece para o cadidato ,
+Vamos mudar o tema da site, para um verde , algo mas esperança , com as corres naturais do nordeste , não so o sol, quente mas o verde do cerrado a produtividade do nordte , 
+vamos fazer algo como direcionamento ou parceiria com univercidades para direcinamento de aprendizagem ,
+vamos fazer que a pessoa cadastra o curriculo , matem no banco de taletos, e quando uma empresa busca uma vaga ja aparece para empresa essa pessoa como comparivel ou visualizar o currriculo dela . 
+veja uma forma de anteder o pessoal do agro , onde temos sempre perido de colheite onde entra os famos empregos temporarios , faça uma foma dessas pessoas seram descoberta pela empresa . 

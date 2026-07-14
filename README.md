@@ -104,6 +104,26 @@ update public.profiles set role = 'admin' where id = '<seu-user-id>';
 
 (o `<seu-user-id>` é encontrado em **Authentication > Users** no painel do Supabase)
 
+### 8. (Opcional) Configurar pagamentos — vaga em destaque
+
+Sem essa configuração, o botão "Destacar vaga" mostra um aviso de "pagamentos
+ainda não configurados" — o resto do site funciona normalmente.
+
+1. Crie uma conta em [mercadopago.com.br](https://www.mercadopago.com.br) (pode ser conta de teste/sandbox para desenvolvimento).
+2. No [painel de desenvolvedores](https://www.mercadopago.com.br/developers/panel), crie uma aplicação e pegue as **credenciais de teste**: `Access Token` e configure um **Webhook secret** (em *Webhooks* → *Configurar notificações*).
+3. Preencha no `.env.local`:
+   ```
+   MERCADOPAGO_ACCESS_TOKEN=<seu access token de teste>
+   MERCADOPAGO_WEBHOOK_SECRET=<seu webhook secret>
+   ```
+4. **Webhook local**: o Mercado Pago precisa alcançar `/api/webhooks/mercadopago` pela internet — `localhost` sozinho não funciona. Use um túnel:
+   ```bash
+   npx ngrok http 3000
+   ```
+   Copie a URL pública gerada (ex: `https://abcd1234.ngrok-free.app`) e configure a mesma URL + `/api/webhooks/mercadopago` no painel do Mercado Pago (*Webhooks* → *URL de produção/teste*).
+5. Teste o fluxo: em `/empresa/vagas`, clique em "Destacar vaga" numa vaga publicada, escolha um plano, e complete o pagamento com um [cartão de teste do Mercado Pago](https://www.mercadopago.com.br/developers/pt/docs/checkout-pro/additional-content/your-integrations/test/cards). A vaga deve aparecer com o selo "Destaque" em `/vagas` alguns segundos depois (tempo do webhook chegar).
+6. Em produção (Vercel), troque para as credenciais de produção e aponte o webhook para a URL real do site — não precisa mais de túnel.
+
 ## Scripts
 
 - `npm run dev` — servidor de desenvolvimento

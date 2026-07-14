@@ -1,5 +1,6 @@
 import { headers } from "next/headers"
 import { notFound } from "next/navigation"
+import { Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { ApplyButton } from "@/components/shared/apply-button"
@@ -27,6 +28,10 @@ const SECTOR_LABELS: Record<EconomicSector, string> = {
   comercio_servicos: "Comércio e serviços",
   industria_construcao: "Indústria e construção",
   outro: "Outro",
+}
+
+function isCurrentlyFeatured(job: { is_featured: boolean; featured_until: string | null }) {
+  return job.is_featured && !!job.featured_until && new Date(job.featured_until).getTime() > Date.now()
 }
 
 type Params = Promise<{ id: string }>
@@ -60,7 +65,7 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
   const { data: job } = await supabase
     .from("jobs")
     .select(
-      "id, title, description, requirements, benefits, contract_type, workplace_type, city, state, salary_min, salary_max, salary_is_public, economic_sector, required_skills, suggested_qualification, companies(trade_name, city, state)"
+      "id, title, description, requirements, benefits, contract_type, workplace_type, city, state, salary_min, salary_max, salary_is_public, economic_sector, required_skills, suggested_qualification, is_featured, featured_until, companies(trade_name, city, state)"
     )
     .eq("id", id)
     .single()
@@ -80,6 +85,8 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
       economic_sector: EconomicSector | null
       required_skills: string[]
       suggested_qualification: string | null
+      is_featured: boolean
+      featured_until: string | null
       companies: { trade_name: string; city: string | null; state: string | null } | null
     }, { merge: false }>()
 
@@ -88,6 +95,7 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
   }
 
   const company = job.companies
+  const jobIsFeatured = isCurrentlyFeatured(job)
 
   const {
     data: { user },
@@ -121,6 +129,12 @@ export default async function VagaDetailPage({ params }: { params: Params }) {
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both flex flex-wrap items-center gap-2">
+        {jobIsFeatured && (
+          <Badge className="gap-1 border-amber-300 bg-amber-100 text-amber-800">
+            <Sparkles className="size-3" />
+            Vaga em destaque
+          </Badge>
+        )}
         <Badge variant="secondary">
           {CONTRACT_LABELS[job.contract_type] ?? job.contract_type}
         </Badge>

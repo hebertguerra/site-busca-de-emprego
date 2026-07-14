@@ -511,16 +511,19 @@ create policy "usuario ve o proprio historico de consentimento"
 -- -------------------------------------------------------------------------
 -- Grants de tabela (necessarios alem do RLS).
 -- Desde 2025 o Supabase parou de auto-expor tabelas novas do schema public
--- para anon/authenticated: sem este GRANT, toda query falha com "permission
--- denied" antes mesmo de a policy de RLS ser avaliada. RLS continua sendo a
--- camada de seguranca real (linha a linha); o GRANT so libera a operacao no
--- nivel da tabela.
+-- para anon/authenticated/service_role: sem este GRANT, toda query falha com
+-- "permission denied" antes mesmo de a policy de RLS ser avaliada (e mesmo
+-- service_role, apesar do atributo BYPASSRLS, ainda precisa de GRANT
+-- explicito - BYPASSRLS so pula as policies, nao o controle de acesso padrao
+-- do Postgres). RLS continua sendo a camada de seguranca real (linha a
+-- linha) para anon/authenticated; o GRANT so libera a operacao no nivel da
+-- tabela.
 -- -------------------------------------------------------------------------
-grant usage on schema public to anon, authenticated;
-grant select, insert, update, delete on all tables in schema public to anon, authenticated;
-grant usage, select on all sequences in schema public to anon, authenticated;
-alter default privileges in schema public grant select, insert, update, delete on tables to anon, authenticated;
-alter default privileges in schema public grant usage, select on sequences to anon, authenticated;
+grant usage on schema public to anon, authenticated, service_role;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated, service_role;
+grant usage, select on all sequences in schema public to anon, authenticated, service_role;
+alter default privileges in schema public grant select, insert, update, delete on tables to anon, authenticated, service_role;
+alter default privileges in schema public grant usage, select on sequences to anon, authenticated, service_role;
 
 -- =========================================================================
 -- Storage: buckets e policies
