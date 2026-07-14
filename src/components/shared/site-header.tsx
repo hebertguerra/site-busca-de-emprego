@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Sun } from "lucide-react"
+import { Sprout } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { signOut } from "@/lib/actions/auth"
@@ -22,8 +22,8 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 text-lg font-bold">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-amber-500 text-primary-foreground">
-            <Sun className="size-4.5" />
+          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-lime-500 text-primary-foreground">
+            <Sprout className="size-4.5" />
           </span>
           Vagas Piauí
         </Link>

@@ -16,7 +16,7 @@ export function AuthCard({
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-12">
       <Card className="gap-0 overflow-hidden rounded-3xl border-border/70 py-0 shadow-lg">
-        <div className="bg-gradient-to-br from-primary via-orange-600 to-amber-500 px-6 py-7 text-primary-foreground">
+        <div className="bg-gradient-to-br from-primary via-emerald-600 to-lime-500 px-6 py-7 text-primary-foreground">
           <span className="flex size-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
             <Icon className="size-5" />
           </span>

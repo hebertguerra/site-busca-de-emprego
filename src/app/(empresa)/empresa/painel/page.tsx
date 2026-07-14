@@ -24,7 +24,7 @@ export default async function PainelEmpresaPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-orange-600 to-amber-500 bg-[length:220%_220%] text-primary-foreground animate-gradient-pan">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-emerald-600 to-lime-500 bg-[length:220%_220%] text-primary-foreground animate-gradient-pan">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-16 -top-16 size-64 animate-float-a rounded-full bg-white/10 blur-3xl"
