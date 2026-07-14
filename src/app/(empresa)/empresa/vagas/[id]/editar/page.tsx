@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
+import { Briefcase } from "lucide-react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { JobForm } from "@/components/forms/job-form"
 import { updateJob } from "@/lib/actions/jobs"
 import { createClient } from "@/lib/supabase/server"
@@ -21,21 +21,24 @@ export default async function EditarVagaPage({ params }: { params: Params }) {
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-4 py-12">
-      <h1 className="text-2xl font-bold">Editar vaga</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight">Editar vaga</h1>
       {job.status === "publicada" && (
         <p className="mt-1 text-sm text-muted-foreground">
           Alterações em uma vaga já publicada não exigem nova aprovação.
         </p>
       )}
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="text-base">Detalhes da vaga</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both mt-6 rounded-2xl border bg-card p-5 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <Briefcase className="size-4.5" />
+          </span>
+          <h2 className="font-semibold">Detalhes da vaga</h2>
+        </div>
+        <div className="mt-4">
           <JobForm job={job} action={boundUpdateJob} />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

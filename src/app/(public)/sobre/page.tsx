@@ -2,8 +2,8 @@ export const metadata = { title: "Sobre" }
 
 export default function SobrePage() {
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-      <h1 className="text-2xl font-bold">Sobre o Vagas Piauí</h1>
+    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both mx-auto w-full max-w-3xl flex-1 px-4 py-12">
+      <h1 className="text-3xl font-extrabold tracking-tight">Sobre o Vagas Piauí</h1>
       <div className="prose prose-sm mt-4 max-w-none text-muted-foreground">
         <p>
           O Vagas Piauí nasceu para aproximar quem busca uma oportunidade de

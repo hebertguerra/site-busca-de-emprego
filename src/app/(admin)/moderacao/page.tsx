@@ -1,3 +1,5 @@
+import { AlertTriangle, Building2, ClipboardCheck } from "lucide-react"
+
 import { ModerationActions } from "@/components/forms/moderation-actions"
 import { createAdminClient } from "@/lib/supabase/admin"
 
@@ -56,18 +58,27 @@ export default async function ModeracaoPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-      <h1 className="text-2xl font-bold">Moderação</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight">Moderação</h1>
 
       <section className="mt-8">
-        <h2 className="text-lg font-semibold">Vagas aguardando aprovação</h2>
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+            <ClipboardCheck className="size-4" />
+          </span>
+          <h2 className="text-lg font-semibold">Vagas aguardando aprovação</h2>
+        </div>
         {(pendingJobs?.length ?? 0) === 0 && (
           <p className="mt-2 text-sm text-muted-foreground">Nenhuma vaga pendente.</p>
         )}
         <div className="mt-3 grid gap-3">
-          {pendingJobs?.map((job) => {
+          {pendingJobs?.map((job, index) => {
             const company = job.companies
             return (
-              <div key={job.id} className="rounded-lg border p-4">
+              <div
+                key={job.id}
+                className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both rounded-2xl border bg-card p-4 shadow-sm"
+                style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+              >
                 <p className="font-medium">{job.title}</p>
                 <p className="text-sm text-muted-foreground">
                   {company?.trade_name} · {job.city}/{job.state}
@@ -83,13 +94,18 @@ export default async function ModeracaoPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold">Denúncias abertas</h2>
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-rose-100 text-rose-700">
+            <AlertTriangle className="size-4" />
+          </span>
+          <h2 className="text-lg font-semibold">Denúncias abertas</h2>
+        </div>
         {(openReports?.length ?? 0) === 0 && (
           <p className="mt-2 text-sm text-muted-foreground">Nenhuma denúncia aberta.</p>
         )}
         <div className="mt-3 grid gap-3">
           {openReports?.map((report) => (
-            <div key={report.id} className="rounded-lg border p-4 text-sm">
+            <div key={report.id} className="rounded-2xl border bg-card p-4 text-sm shadow-sm">
               <p className="font-medium">{report.reason}</p>
               {report.description && <p className="text-muted-foreground">{report.description}</p>}
             </div>
@@ -98,13 +114,18 @@ export default async function ModeracaoPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold">Empresas não verificadas</h2>
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Building2 className="size-4" />
+          </span>
+          <h2 className="text-lg font-semibold">Empresas não verificadas</h2>
+        </div>
         {(unverifiedCompanies?.length ?? 0) === 0 && (
           <p className="mt-2 text-sm text-muted-foreground">Nenhuma empresa pendente de verificação.</p>
         )}
         <div className="mt-3 grid gap-2">
           {unverifiedCompanies?.map((company) => (
-            <div key={company.id} className="rounded-lg border p-3 text-sm">
+            <div key={company.id} className="rounded-xl border bg-card p-3 text-sm shadow-sm">
               {company.trade_name} — {company.cnpj}
             </div>
           ))}

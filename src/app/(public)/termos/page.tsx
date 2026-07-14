@@ -2,8 +2,8 @@ export const metadata = { title: "Termos de Uso" }
 
 export default function TermosPage() {
   return (
-    <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-      <h1 className="text-2xl font-bold">Termos de Uso</h1>
+    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both mx-auto w-full max-w-3xl flex-1 px-4 py-12">
+      <h1 className="text-3xl font-extrabold tracking-tight">Termos de Uso</h1>
       <div className="prose prose-sm mt-4 max-w-none space-y-4 text-muted-foreground">
         <p>
           Ao criar uma conta no Vagas Piauí, candidato ou empresa concordam
